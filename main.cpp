@@ -8,12 +8,15 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <stdio.h>
+#include "UART.h"
 
 char pin_led = 3;
 const unsigned char led_mask = (1 << pin_led);
 char pin_bot = 4;
 const unsigned char bot_mask = (1 << pin_bot);
 unsigned long tempo = 1000;
+
+UART uart;
 
 void setup () {
 	DDRB = (DDRB | led_mask) & ~bot_mask;
@@ -32,6 +35,7 @@ void apaga_led() {
 }
 
 void loop() {
+	uart.put('a');
 	if(ler_botao())	{
 		acende_led();
 	}else {
