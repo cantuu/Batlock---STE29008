@@ -8,16 +8,33 @@
 #include "UART.h"
 #include <avr/io.h>
 
-UART::UART(int bd, int db,
-		   int pr, int sb)
-	:_baudrate(bd), _databits(db), _parity(pr), _stopbits(sb)
+UART::UART(unsigned long bd,
+		   DataBits_t db,
+		   ParityBits_t pr,
+		   StopBits_t sb)
+	:_baudrate(bd),
+	 _databits(db),
+	 _parity(pr),
+	 _stopbits(sb)
 {
 	//set baudrate
 	UBRR0 = (F_CPU / (16ul * this->_baudrate))-1;
 	// liga RX e Tx
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+
+	//set databits
+	if (_databits == DATABITS_9) {
+
+	}else
+		UCSR0C = (UCSR0C & ~(3 << UCSZ00)) | (_databits << UCSZ00);
+	//set parity
+	UCSR0C = (UCSR0C & ~(3 << UPM00)) | (_parity << UPM00);
+	//set stopbits
+	UCSR0C = (UCSR0C & ~(1 << USBS0)) | (_stopbits < USBS0);
+
 	// set frame: 8N1
-	UCSR0C = (3<<UCSZ00);
+	//UCSR0C = (3<<UCSZ00);
+
 }
 
 UART::~UART() {
@@ -39,5 +56,5 @@ unsigned char UART::get() {
 }
 
 void UART::puts(char * str) {
-
+	put(str[1]);
 }
