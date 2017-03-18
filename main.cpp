@@ -19,7 +19,7 @@ unsigned long tempo = 1000;
 UART uart(19200,
 		  UART::DATABITS_8,
 		  UART::PARITY_NONE,
-		  UART::STOPBITS_1);
+		  UART::STOPBITS_2);
 
 void setup () {
 	DDRB = (DDRB | led_mask) & ~bot_mask;
