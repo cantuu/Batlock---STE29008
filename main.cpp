@@ -9,11 +9,14 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include "UART.h"
+#include "GPIO.h"
 
-char pin_led = 3;
-const unsigned char led_mask = (1 << pin_led);
-char pin_bot = 4;
-const unsigned char bot_mask = (1 << pin_bot);
+const int pin_led = 11;
+//const unsigned char led_mask = (1 << pin_led);
+
+const int pin_bot = 12;
+//const unsigned char bot_mask = (1 << pin_bot);
+
 unsigned long tempo = 1000;
 
 UART uart(19200,
@@ -21,29 +24,18 @@ UART uart(19200,
 		  UART::PARITY_NONE,
 		  UART::STOPBITS_2);
 
+GPIO led(pin_led, GPIO::OUTPUT);
+GPIO botao(pin_bot,GPIO::INPUT);
+
 void setup () {
-	DDRB = (DDRB | led_mask) & ~bot_mask;
+	//DDRB = (DDRB | led_mask) & ~bot_mask;
 }
 
-bool ler_botao() {
-	return (PINB & bot_mask);
-}
-
-void acende_led() {
-	PORTB = PORTB | led_mask;
-}
-
-void apaga_led() {
-	PORTB = PORTB & ~led_mask;
-}
+bool val_botao;
 
 void loop() {
-	uart.put(uart.get()+1);
-	if(ler_botao())	{
-		acende_led();
-	}else {
-		apaga_led();
-	}
+	val_botao = botao.get();
+	led.set(val_botao);
 }
 
 int main () {
