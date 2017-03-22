@@ -24,9 +24,11 @@ UART::UART(unsigned long bd,
 
 	//set databits
 	if (_databits == DATABITS_9) {
-
-	}else
-		UCSR0C = (UCSR0C & ~(3 << UCSZ00)) | (_databits << UCSZ00);
+		UCSR0B = (1<<RXB80)|(1<<TXB80);
+		UCSR0B = (UCSR0B & ~(1 << UCSZ02)) | (_databits << UCSZ00);
+		//UCSR0C = (UCSR0C & ~(3 << UCSZ00)) | (_databits << UCSZ00);
+	}//else
+	UCSR0C = (UCSR0C & ~(3 << UCSZ00)) | (_databits << UCSZ00);
 	//set parity
 	UCSR0C = (UCSR0C & ~(3 << UPM00)) | (_parity << UPM00);
 	//set stopbits
