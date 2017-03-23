@@ -11,29 +11,30 @@
 
 GPIO::GPIO(int pin, PortDirection_t dir) {
 	//calcular a mascara
-	this->pin_mask = (1<< pin);
 
 	//configurar DDR
 	if (pin >= 0 && pin <= 7) {
 		//portd
-		if(dir == INPUT)
-			DDRD = (DDRD & ~pin_mask);
-		else
-			DDRD = (DDRD | pin_mask);
+		pin += 16;
+		this->pin_mask = (1<< pin);
 
 		_ddr = & DDRD;
 		_pin = & PIND;
 		_port = & PORTD;
 	}
 	if (pin >= 8 && pin <= 13) {
-		if(dir == INPUT)
-			DDRB = (DDRB & ~pin_mask);
-		else
-			DDRB = (DDRB | pin_mask);
+		pin -= 8;
+		this->pin_mask = (1<< pin);
+
 		_ddr = & DDRB;
 		_pin = & PINB;
 		_port = & PORTB;
 	}
+	if(dir == INPUT)
+		*_ddr = (*_ddr & ~pin_mask);
+	else
+		*_ddr = (*_ddr | pin_mask);
+
 }
 
 GPIO::~GPIO() {}
@@ -49,6 +50,8 @@ void GPIO::set(bool val) {
 		(*_port) = (*_port) | pin_mask;
 	else
 		(*_port) = (*_port) & ~ pin_mask;
+
+
 
 }
 

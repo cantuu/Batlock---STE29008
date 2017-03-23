@@ -11,10 +11,10 @@
 #include "UART.h"
 #include "GPIO.h"
 
-const int pin_led = 11;
+const int pin_led = 11;//03;
 //const unsigned char led_mask = (1 << pin_led);
 
-const int pin_bot = 12;
+const int pin_bot = 12;//04;
 //const unsigned char bot_mask = (1 << pin_bot);
 
 unsigned long tempo = 1000;
