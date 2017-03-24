@@ -50,8 +50,5 @@ void GPIO::set(bool val) {
 		(*_port) = (*_port) | pin_mask;
 	else
 		(*_port) = (*_port) & ~ pin_mask;
-
-
-
 }
 
