@@ -23,6 +23,9 @@ public:
 
 private:
 	static unsigned long long _ticks;
+	static unsigned long long timer_Count;
+	static Milliseconds millisegundos;
+
 };
 
 #endif /* TIMER_H_ */

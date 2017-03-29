@@ -35,18 +35,18 @@ void setup () {
 	sei();
 }
 
-bool val_botao;
+bool val_botao=false;
 char message[8];
 
 void loop() {
-	val_botao = botao.get();
+	val_botao = !val_botao;
 	led.set(val_botao);
 	//sprintf (message, "LED: %d\n", val_botao);
 	//uart.puts(message);
 	sprintf (message, "%d\n", timer.millis());
 	uart.puts(message);
 
-
+	timer.delay(100);
 }
 
 int main () {
