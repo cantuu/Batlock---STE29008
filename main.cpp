@@ -32,7 +32,7 @@ Timer timer(1000);
 
 void setup () {
 	//DDRB = (DDRB | led_mask) & ~bot_mask;
-	sei();
+	sei(); //enable interruptions
 }
 
 bool val_botao=false;
@@ -43,10 +43,13 @@ void loop() {
 	led.set(val_botao);
 	//sprintf (message, "LED: %d\n", val_botao);
 	//uart.puts(message);
-	sprintf (message, "%d\n", timer.millis());
+	sprintf (message, "milli: %lu\n", timer.millis());
+	uart.puts(message);
+	sprintf (message, "micro: %lu\n", timer.micros());
 	uart.puts(message);
 
-	timer.delay(100);
+	timer.udelay(5000000);
+	//timer.delay(1000);
 }
 
 int main () {

@@ -23,8 +23,13 @@ public:
 
 private:
 	static unsigned long long _ticks;
-	static unsigned long long timer_Count;
+	static unsigned long long ciclos;
 	static Milliseconds millisegundos;
+	static Microseconds microsegundos;
+	static unsigned long long uTmin;
+	static unsigned long long uTmax;
+	static unsigned long long ftimer;
+	int div;
 
 };
 
