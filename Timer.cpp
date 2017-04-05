@@ -62,6 +62,7 @@ void Timer::udelay(Microseconds us) {
 	while((inicial+us)>microsegundos);
 }
 void Timer::isr_handler() {
+ 	//TCNT0 = 0xFF - ciclos ; //0xFF - 16;
 	_ticks++;
 
 	//Cada tick tem 240 ciclos de duracao de uTmin.

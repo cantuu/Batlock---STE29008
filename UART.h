@@ -7,6 +7,7 @@
 
 #ifndef UART_H_
 #define UART_H_
+#include "FIFO.h"
 
 class UART {
 public:
@@ -37,11 +38,15 @@ public:
 	unsigned char get();
 	void puts(char * str);
 
+	FIFO<8> _tx_fifo;
+
 private:
 	unsigned long _baudrate;
 	DataBits_t _databits;
 	ParityBits_t _parity;
 	StopBits_t _stopbits;
+
+	//FIFO<32> _rx_fifo;
 };
 
 #endif /* UART_H_ */
