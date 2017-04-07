@@ -36,7 +36,9 @@ public:
 
 	void put(unsigned char data);
 	unsigned char get();
-	void puts(char * str);
+	void puts(const char * str);
+	static void isr_handler_RX();
+	static void isr_handler_TX();
 
 	FIFO<8> _tx_fifo;
 
@@ -46,7 +48,7 @@ private:
 	ParityBits_t _parity;
 	StopBits_t _stopbits;
 
-	//FIFO<32> _rx_fifo;
+	FIFO<8> _rx_fifo;
 };
 
 #endif /* UART_H_ */

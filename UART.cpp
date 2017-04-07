@@ -7,6 +7,7 @@
 
 #include "UART.h"
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 UART::UART(unsigned long bd,
 		   DataBits_t db,
@@ -37,6 +38,11 @@ UART::UART(unsigned long bd,
 	// set frame: 8N1
 	//UCSR0C = (3<<UCSZ00);
 
+	//Ativando a interrupçao
+	UCSR0B = (UCSR0B | (1 << RXCIE0));
+	UCSR0B = (UCSR0B | (1 << TXCIE0));
+
+
 }
 
 UART::~UART() {
@@ -53,13 +59,31 @@ void UART::put(unsigned char data) {
 unsigned char UART::get() {
 	// wait data until received
 	while (!(UCSR0A & (1<<RXC0)));
+
 	//return received data
 	return UDR0;
 }
 
-void UART::puts(char * str) {
+void UART::puts(const char * str) {
 	while (* str !='\0') {
 		put(*str);
 		str++;
 	}
+}
+
+void UART::isr_handler_RX(){
+	//Quando recebe algo, empurra na fila
+	_rx_fifo.push(UDR0);
+}
+
+void UART::isr_handler_TX(){
+	//Quando é para enviae algo, dá um pop na fila
+
+}
+
+ISR(USART_RXC_vect) {
+	UART::isr_handler_RX();
+}
+ISR(USART_TXC_vect) {
+	UART::isr_handler_TX();
 }

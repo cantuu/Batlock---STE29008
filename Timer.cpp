@@ -71,8 +71,6 @@ void Timer::isr_handler() {
 
 }
 
-
-
 ISR(TIMER0_OVF_vect) {
 	Timer::isr_handler();
 }

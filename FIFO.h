@@ -23,11 +23,16 @@ public:
 	}
 
 	~FIFO(){};
+	void clear () {
+		_head = 0;
+		_tail = 0;
+		_counter_size = 0;
+	}
 
 	int push(char value) {
 		//if (((this->_tail+1)%Q_SIZE) == _head)
 		if (Q_SIZE <= this->_counter_size)
-			return FIFO_ERROR_FULL;//ta cheio
+			return (int)FIFO_ERROR_FULL;//ta cheio
 		_buffer[_tail] = value;
 		this->_counter_size++;
 		_tail = (_tail+1) % Q_SIZE;
@@ -43,18 +48,18 @@ public:
 		char returnval;
 		//if(_head==_tail)
 		if(this->_counter_size==0)
-			return FIFO_ERROR_EMPTY;
+			return (int)FIFO_ERROR_EMPTY;
 		returnval=_buffer[_head];
 		this->_counter_size--;
-		_head++;
+		/*_head++;
 		if (_head == Q_SIZE) {
 			_head = 0;
-		}
-		/*if(_head == Q_SIZE)
+		}*/
+		if(_head == Q_SIZE)
 			_head=0;
 		else
 			_head++;
-		*/
+
 		return returnval;
 	}
 private:
