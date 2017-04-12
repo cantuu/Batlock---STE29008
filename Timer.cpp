@@ -57,6 +57,7 @@ void Timer::delay(Milliseconds ms) {
 	Milliseconds inicial = millisegundos;
 	while((inicial+ms)>millisegundos);
 }
+
 void Timer::udelay(Microseconds us) {
 	Microseconds inicial = microsegundos;
 	while((inicial+us)>microsegundos);

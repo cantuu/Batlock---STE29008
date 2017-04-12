@@ -8,6 +8,10 @@
 #include "UART.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "GPIO.h"
+
+FIFO<8> UART::_tx_fifo;
+FIFO<8> UART::_rx_fifo;
 
 UART::UART(unsigned long bd,
 		   DataBits_t db,
@@ -39,8 +43,9 @@ UART::UART(unsigned long bd,
 	//UCSR0C = (3<<UCSZ00);
 
 	//Ativando a interrupçao
-	UCSR0B = (UCSR0B | (1 << RXCIE0));
-	UCSR0B = (UCSR0B | (1 << TXCIE0));
+	//UCSR0B = (UCSR0B | (1 << TXCIE0));
+	UCSR0B |= (1 << RXCIE0);
+	UCSR0B &= ~(1 << UDRIE0);
 
 
 }
@@ -51,39 +56,65 @@ UART::~UART() {
 
 void UART::put(unsigned char data) {
 	// wait until UDR is empty
-	while (!(UCSR0A & (1<<UDRE0)));
+	//while (!(UCSR0A & (1<<UDRE0)));
+
 	// send data
-	UDR0 = data;
+	//UDR0 = data;
+	_tx_fifo.push(data);
+	UCSR0B |= (1 << UDRIE0);
+
 }
+
 
 unsigned char UART::get() {
 	// wait data until received
-	while (!(UCSR0A & (1<<RXC0)));
+	//while (!(UCSR0A & (1<<RXC0)));
 
 	//return received data
-	return UDR0;
+	//return UDR0;
+
+
+	if(_rx_fifo.size()>0){
+		return _rx_fifo.pop();
+	}
+	return '0';
+
 }
 
 void UART::puts(const char * str) {
+
 	while (* str !='\0') {
 		put(*str);
 		str++;
 	}
+
 }
 
 void UART::isr_handler_RX(){
 	//Quando recebe algo, empurra na fila
-	_rx_fifo.push(UDR0);
+	char x = UDR0;
+	UDR0 = 'x';
+	_rx_fifo.push(x);
 }
 
 void UART::isr_handler_TX(){
-	//Quando é para enviae algo, dá um pop na fila
+	//Quando é para enviar algo, dá um pop na fila
 
+	//Devo desativar aqui o UDRE para evitar que ele fique esperando a interrupçao?
+	//E daí o ativo somente no puts?
+	//http://www.avrfreaks.net/forum/interrupt-driven-usart-1
+	if(_tx_fifo.size()>0){
+		UDR0 = _tx_fifo.pop();
+	}else{
+		UCSR0B &= ~(1 << UDRIE0);
+	}
 }
 
 ISR(USART_RXC_vect) {
 	UART::isr_handler_RX();
 }
-ISR(USART_TXC_vect) {
+
+ISR(USART_UDRE_vect) {
 	UART::isr_handler_TX();
+
 }

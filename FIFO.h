@@ -33,14 +33,16 @@ public:
 		//if (((this->_tail+1)%Q_SIZE) == _head)
 		if (Q_SIZE <= this->_counter_size)
 			return (int)FIFO_ERROR_FULL;//ta cheio
+
 		_buffer[_tail] = value;
 		this->_counter_size++;
-		_tail = (_tail+1) % Q_SIZE;
+		//_tail = (_tail+1) % Q_SIZE;
 
-		//if(_tail == Q_SIZE-1)
-		//	_tail=0;
-		//else
-		//	_tail++;
+		if(_tail == Q_SIZE-1){
+			_tail=0;
+			//this->clear();
+		}else
+			_tail++;
 
 		return 0;
 	}
@@ -55,12 +57,16 @@ public:
 		if (_head == Q_SIZE) {
 			_head = 0;
 		}*/
-		if(_head == Q_SIZE)
+		if(_head == Q_SIZE-1)
 			_head=0;
 		else
 			_head++;
 
 		return returnval;
+	}
+
+	int size(){
+		return _counter_size;
 	}
 private:
 	int _head, _tail, _counter_size;
