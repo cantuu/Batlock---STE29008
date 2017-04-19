@@ -10,7 +10,7 @@
 #include "UART.h"
 #include <avr/io.h>
 #include <stdio.h>
-template <int Q_SIZE>
+template <typename T, int Q_SIZE>
 class FIFO {
 public:
 	static const unsigned int FIFO_ERROR_EMPTY = -1;
@@ -29,7 +29,7 @@ public:
 		_counter_size = 0;
 	}
 
-	int push(char value) {
+	int push(T value) {
 		//if (((this->_tail+1)%Q_SIZE) == _head)
 		if (Q_SIZE <= this->_counter_size)
 			return (int)FIFO_ERROR_FULL;//ta cheio
@@ -46,8 +46,8 @@ public:
 
 		return 0;
 	}
-	char pop(){
-		char returnval;
+	T pop(){
+		T returnval;
 		//if(_head==_tail)
 		if(this->_counter_size==0)
 			return (int)FIFO_ERROR_EMPTY;
@@ -70,7 +70,7 @@ public:
 	}
 private:
 	int _head, _tail, _counter_size;
-	char _buffer[Q_SIZE];
+	T _buffer[Q_SIZE];
 };
 
 #endif /* FIFO_H_ */

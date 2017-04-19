@@ -48,8 +48,8 @@ private:
 	ParityBits_t _parity;
 	StopBits_t _stopbits;
 
-	static FIFO<8> _tx_fifo;
-	static FIFO<8> _rx_fifo;
+	static FIFO<char,8> _tx_fifo;
+	static FIFO<char,8> _rx_fifo;
 };
 
 #endif /* UART_H_ */

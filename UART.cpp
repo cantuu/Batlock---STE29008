@@ -10,8 +10,8 @@
 #include <avr/interrupt.h>
 #include "GPIO.h"
 
-FIFO<8> UART::_tx_fifo;
-FIFO<8> UART::_rx_fifo;
+FIFO<char,8> UART::_tx_fifo;
+FIFO<char,8> UART::_rx_fifo;
 
 UART::UART(unsigned long bd,
 		   DataBits_t db,
