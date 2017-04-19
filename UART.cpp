@@ -92,9 +92,7 @@ void UART::puts(const char * str) {
 
 void UART::isr_handler_RX(){
 	//Quando recebe algo, empurra na fila
-	char x = UDR0;
-	UDR0 = 'x';
-	_rx_fifo.push(x);
+	_rx_fifo.push(UDR0);
 }
 
 void UART::isr_handler_TX(){
@@ -110,7 +108,7 @@ void UART::isr_handler_TX(){
 	}
 }
 
-ISR(USART_RXC_vect) {
+ISR(USART_RX_vect) {
 	UART::isr_handler_RX();
 }
 

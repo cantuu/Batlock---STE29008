@@ -47,8 +47,8 @@ void loop() {
 	//uart.puts(message);
     char teste = uart.get();
 	//if(teste != '0'){
-//		sprintf (message, "LEU: %c\n", teste);
-//		uart.puts(message);
+		sprintf (message, "LEU: %c\n", teste);
+		uart.puts(message);
 	//}
 
 	//sprintf (message, "micro: %lu\n", timer.micros());
