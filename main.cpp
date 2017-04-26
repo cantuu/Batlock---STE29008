@@ -38,71 +38,36 @@ void setup () {
 
 bool val_botao=false;
 char message[16];
-
 bool umavez=false;
+unsigned long long tempo_decorrido = 0;
 
 void loop() {
-	//val_botao = !val_botao;
-	//led.set(val_botao);
-	//sprintf (message, "TESTE\n");// DA UART. RECEBE ESTE TEXTO TODO E ARMAZENA EM UMA FILA DE TAMANHO 8\n");
-	//uart.puts(message);
-    //char teste = uart.get();
-	//if(teste != '0'){
-		//sprintf (message, "LEU: %c\n", teste);
-		//uart.puts(message);
-	//}
+	val_botao = botao.get();
 
-	//sprintf (message, "micro: %lu\n", timer.micros());
-	//uart.puts(message);
+	if(val_botao){
+		admin.admin_login(12345);
+		led.set(true);
+		tempo_decorrido = timer.millis();
+	}
+	if(tempo_decorrido>0 && ((timer.millis()-tempo_decorrido) > 5000)){
+		admin.admin_logoff();
+		tempo_decorrido=0;
+		led.set(false);
+	}
 
-	admin.admin_login(12345);
 
 	int teste_Add=3;
-
 	teste_Add = admin.add(13579);
-	sprintf (message, "ADD 1: %d\n", teste_Add);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
-
 	teste_Add = admin.add(04354);
-	sprintf (message, "ADD 2: %d\n", teste_Add);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
-
-
 	teste_Add = admin.add(112233);
-	sprintf (message, "ADD 3: %d\n", teste_Add);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
-
-
 	teste_Add = admin.add(112833);
-	sprintf (message, "ADD 4: %d\n", teste_Add);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
-
-
-	int teste_search = 3;
-
-	teste_search = admin.search(112233);
-	sprintf (message, "search 1: %d\n", teste_search);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
-
-	teste_search = admin.search(86523);
-	sprintf (message, "search 2: %d\n", teste_search);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
 
 	int size = admin.get_size_db();
 	sprintf (message, "size: %d\n", size);
 	uart.puts(message);
 	timer.udelay((1000000)/2);
 
-	int teste_del = admin.del(112233);
-	sprintf (message, "del: %d\n", teste_del);
-	uart.puts(message);
-	timer.udelay((1000000)/2);
+	teste_Add = admin.add(152833);
 
 	//timer.delay(1000);
 }
