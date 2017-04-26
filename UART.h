@@ -48,7 +48,7 @@ private:
 	ParityBits_t _parity;
 	StopBits_t _stopbits;
 
-	static FIFO<char,8> _tx_fifo;
+	static FIFO<char,16> _tx_fifo;
 	static FIFO<char,8> _rx_fifo;
 };
 

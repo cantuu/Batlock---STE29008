@@ -12,6 +12,7 @@
 #include "UART.h"
 #include "GPIO.h"
 #include "Timer.h"
+#include "Management.h"
 
 const int pin_led = 11;
 //const unsigned char led_mask = (1 << pin_led);
@@ -29,32 +30,80 @@ UART uart(19200,
 GPIO led(pin_led, GPIO::OUTPUT);
 GPIO botao(pin_bot,GPIO::INPUT);
 Timer timer(1000);
+Management<unsigned long> admin(12345);
 
 void setup () {
-	//DDRB = (DDRB | led_mask) & ~bot_mask;
 	sei(); //enable interruptions
 }
 
 bool val_botao=false;
-char message[8];
+char message[16];
 
 bool umavez=false;
 
 void loop() {
-	val_botao = !val_botao;
+	//val_botao = !val_botao;
 	//led.set(val_botao);
 	//sprintf (message, "TESTE\n");// DA UART. RECEBE ESTE TEXTO TODO E ARMAZENA EM UMA FILA DE TAMANHO 8\n");
 	//uart.puts(message);
-    char teste = uart.get();
+    //char teste = uart.get();
 	//if(teste != '0'){
-		sprintf (message, "LEU: %c\n", teste);
-		uart.puts(message);
+		//sprintf (message, "LEU: %c\n", teste);
+		//uart.puts(message);
 	//}
 
 	//sprintf (message, "micro: %lu\n", timer.micros());
 	//uart.puts(message);
 
+	admin.admin_login(12345);
+
+	int teste_Add=3;
+
+	teste_Add = admin.add(13579);
+	sprintf (message, "ADD 1: %d\n", teste_Add);
+	uart.puts(message);
 	timer.udelay((1000000)/2);
+
+	teste_Add = admin.add(04354);
+	sprintf (message, "ADD 2: %d\n", teste_Add);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
+
+	teste_Add = admin.add(112233);
+	sprintf (message, "ADD 3: %d\n", teste_Add);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
+
+	teste_Add = admin.add(112833);
+	sprintf (message, "ADD 4: %d\n", teste_Add);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
+
+	int teste_search = 3;
+
+	teste_search = admin.search(112233);
+	sprintf (message, "search 1: %d\n", teste_search);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
+	teste_search = admin.search(86523);
+	sprintf (message, "search 2: %d\n", teste_search);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
+	int size = admin.get_size_db();
+	sprintf (message, "size: %d\n", size);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
+	int teste_del = admin.del(112233);
+	sprintf (message, "del: %d\n", teste_del);
+	uart.puts(message);
+	timer.udelay((1000000)/2);
+
 	//timer.delay(1000);
 }
 

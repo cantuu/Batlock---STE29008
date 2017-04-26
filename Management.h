@@ -13,23 +13,59 @@
 template<typename T>
 class Management {
 public:
-	Management() {
-		this->_manager_id = 1111;
+	static const unsigned int FIFO_ERROR_ADMIN_NOT_LOGGED = -3;
+	static const unsigned int FIFO_ERROR_EXISTENT_USER = -4;
+
+
+	Management(T admin) {
+		this->_manager_id = admin;
+		_admin_logged = false;
+	}
+
+	int admin_login(T user){
+		if(user == _manager_id) _admin_logged=true;
+	}
+	int admin_logoff(){
+		_admin_logged=false;
 	}
 
 	int add (T user){
-		if(_db_users.push(user) < 0) {
-			return _db_users.FIFO_ERROR_FULL;
-		}else{
-			return 0;
+		if(user==_manager_id)return FIFO_ERROR_ADMIN_NOT_LOGGED;
+
+		if(_admin_logged){
+			if(search(user)>=0)return FIFO_ERROR_EXISTENT_USER;
+
+			if(_db_users.push(user) < 0) {
+				return _db_users.FIFO_ERROR_FULL;
+			}else{
+				return 0;
+			}
+
 		}
 	}
-
 	int del(T user){
-		if(_db_users.pop()  < 0) {
-			return _db_users.FIFO_ERROR_EMPTY;
-		}else{
-			return 0;
+		if(user==_manager_id)return -1;
+
+
+		if(_admin_logged){
+
+			if(_db_users.size()  <=  0) {
+				return _db_users.FIFO_ERROR_EMPTY;
+			}else{
+				T popped;
+				int i=0;
+
+				while(_db_users.size()>i){
+					if((popped = _db_users.pop()) == user){
+						return i;
+					}
+					_db_users.push(popped);
+					i++;
+				}
+
+
+				return -1;
+			}
 		}
 	}
 
@@ -37,13 +73,27 @@ public:
 		return _db_users.size();
 	}
 
-	T search(T user){
+	int search(T user){
+		T popped;
+		int i=0;
 
+		while(_db_users.size()>i){
+			if((popped = _db_users.pop()) == user){
+				_db_users.push(popped);
+				return i;
+			}
+			_db_users.push(popped);
+			i++;
+		}
+
+		return -1;
 	}
+
 private:
 	T _manager_id;
-	int _n = 32;
+	static const int _n=32;
 	FIFO<T, _n> _db_users;
+	bool _admin_logged;
 };
 
 #endif /* MANAGEMENT_H_ */
