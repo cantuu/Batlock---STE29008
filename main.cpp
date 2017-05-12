@@ -13,6 +13,7 @@
 #include "GPIO.h"
 #include "Timer.h"
 #include "Management.h"
+#include "buzzer.h"
 
 const int pin_led = 11;
 //const unsigned char led_mask = (1 << pin_led);
@@ -29,7 +30,9 @@ UART uart(19200,
 
 GPIO led(pin_led, GPIO::OUTPUT);
 GPIO botao(pin_bot,GPIO::INPUT);
-Timer timer(1000);
+Timer timer(240000);
+buzzer buzz;
+
 Management<unsigned long> admin(12345);
 
 void setup () {
@@ -42,7 +45,7 @@ bool umavez=false;
 unsigned long long tempo_decorrido = 0;
 
 void loop() {
-	val_botao = botao.get();
+/*	val_botao = botao.get();
 
 	if(val_botao){
 		admin.admin_login(12345);
@@ -68,8 +71,15 @@ void loop() {
 	timer.udelay((1000000)/2);
 
 	teste_Add = admin.add(152833);
+*/
 
-	//timer.delay(1000);
+	led.set(true);
+	led.set(false);
+
+	buzz.play(100);
+	timer.udelay((1000000)/2);
+
+
 }
 
 int main () {
