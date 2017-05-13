@@ -14,12 +14,11 @@
 #include "Timer.h"
 #include "Management.h"
 #include "buzzer.h"
+//#include <avr/iom2560.h>
 
-const int pin_led = 11;
-//const unsigned char led_mask = (1 << pin_led);
+const int pin_led = 10;
 
 const int pin_bot = 12;
-//const unsigned char bot_mask = (1 << pin_bot);
 
 unsigned long tempo = 1000;
 
@@ -30,9 +29,8 @@ UART uart(19200,
 
 GPIO led(pin_led, GPIO::OUTPUT);
 GPIO botao(pin_bot,GPIO::INPUT);
-Timer timer(240000);
-buzzer buzz;
-
+Timer timer(1000);
+buzzer buzz(10, 240000);
 Management<unsigned long> admin(12345);
 
 void setup () {
@@ -43,6 +41,7 @@ bool val_botao=false;
 char message[16];
 bool umavez=false;
 unsigned long long tempo_decorrido = 0;
+GPIO _buzzer(10, GPIO::OUTPUT);
 
 void loop() {
 /*	val_botao = botao.get();
@@ -72,11 +71,7 @@ void loop() {
 
 	teste_Add = admin.add(152833);
 */
-
-	led.set(true);
-	led.set(false);
-
-	buzz.play(100);
+	buzz.play(500);
 	timer.udelay((1000000)/2);
 
 
@@ -84,6 +79,7 @@ void loop() {
 
 int main () {
 	setup();
+
 	while(true)
 		loop();
 

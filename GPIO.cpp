@@ -8,10 +8,9 @@
 #include "GPIO.h"
 #include <avr/io.h>
 #include <errno.h>
+//#include <avr/iom2560.h>
 
 GPIO::GPIO(int pin, PortDirection_t dir) {
-	//calcular a mascara
-
 	//configurar DDR
 	if (pin >= 0 && pin <= 7) {
 		//portd
@@ -24,7 +23,7 @@ GPIO::GPIO(int pin, PortDirection_t dir) {
 	}
 	if (pin >= 8 && pin <= 13) {
 		pin -= 8;
-		this->pin_mask = (1<< pin);
+		this->pin_mask = (1<< 4);
 
 		_ddr = & DDRB;
 		_pin = & PINB;
