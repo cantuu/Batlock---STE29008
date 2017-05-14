@@ -108,11 +108,21 @@ void UART::isr_handler_TX(){
 	}
 }
 
-ISR(USART_RX_vect) {
+#ifdef __AVR_ATmega2560__
+ISR(USART0_RX_vect)
+#else
+ISR(USART_RX_vect)
+#endif
+{
 	UART::isr_handler_RX();
 }
 
-ISR(USART_UDRE_vect) {
+#ifdef __AVR_ATmega2560__
+ISR(USART0_UDRE_vect)
+#else
+ISR(USART_UDRE_vect)
+#endif
+{
 	UART::isr_handler_TX();
 
 }

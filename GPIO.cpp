@@ -23,7 +23,7 @@ GPIO::GPIO(int pin, PortDirection_t dir) {
 	}
 	if (pin >= 8 && pin <= 13) {
 		pin -= 8;
-		this->pin_mask = (1<< 4);
+		this->pin_mask = (1<< pin);
 
 		_ddr = & DDRB;
 		_pin = & PINB;

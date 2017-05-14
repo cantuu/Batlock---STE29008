@@ -23,7 +23,11 @@ public:
 	}
 
 	int admin_login(T user){
-		if(user == _manager_id) _admin_logged=true;
+		if(user == _manager_id){
+			_admin_logged=true;
+			return 0;
+		}
+		return -1;
 	}
 	int admin_logoff(){
 		_admin_logged=false;
@@ -52,19 +56,20 @@ public:
 			if(_db_users.size()  <=  0) {
 				return _db_users.FIFO_ERROR_EMPTY;
 			}else{
-				T popped;
-				int i=0;
+				if(user == 0) _db_users.clear();
+				else{
+					T popped;
+					int i=0;
 
-				while(_db_users.size()>i){
-					if((popped = _db_users.pop()) == user){
-						return i;
+					while(_db_users.size()>i){
+						if((popped = _db_users.pop()) == user){
+							return i;
+						}
+						_db_users.push(popped);
+						i++;
 					}
-					_db_users.push(popped);
-					i++;
 				}
-
-
-				return -1;
+				return 0;
 			}
 		}
 	}

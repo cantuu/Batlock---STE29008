@@ -15,9 +15,10 @@ unsigned long long buzzer::ciclos = 0;
 unsigned long long buzzer::uTmin = 0;
 unsigned long long buzzer::ftimer = 0;
 unsigned long long buzzer::atual = 0;
-int buzzer::_pin=10;
+int buzzer::_pin=0;
+
 buzzer::buzzer(int pin, unsigned long Hertz){
-	_pin=pin;
+	_pin = pin;
 
 	TCCR2A = 0x00; //WGM20 e WGM21 para fast pwm
 //	TCCR2A = 0x02; //WGM20 e WGM21 para fast pwm
