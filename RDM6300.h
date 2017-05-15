@@ -27,13 +27,22 @@ public:
     }
 
     unsigned long long read() {
-        while (!_id_is_valid) {
+       while (!_id_is_valid) {
             while (_serial->has_data()) {
                 parse(_serial->get());
             }
         }
         _id_is_valid = false;
         return _current_id;
+/*
+    		   if(_id_is_valid) {
+    	            while (_serial->has_data()) {
+    	                parse(_serial->get());
+    	            }
+        	        return _current_id;
+    	        }
+    	        _id_is_valid = false;
+    	        return 0;*/
     }
 
 private:

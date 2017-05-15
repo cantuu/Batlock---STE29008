@@ -35,7 +35,7 @@ unsigned long freq_buzzer = 240000;
 UART uart(19200, UART::DATABITS_8, UART::PARITY_NONE, UART::STOPBITS_2);
 
 //NAO SEI SE TA CERTO ISSO!
-UART1 serial(19200, UART1::DATABITS_8, UART1::PARITY_NONE, UART1::STOPBITS_2);
+UART1 serial(9600, UART1::DATABITS_8, UART1::PARITY_NONE, UART1::STOPBITS_1);
 RDM6300<UART1> RFID(&serial);
 
 GPIO led_vermelho(pin_led_vermelho, GPIO::OUTPUT);
@@ -63,69 +63,94 @@ bool val_botao_2 = false;
 bool val_botao_3 = false;
 
 char message[16];
-bool umavez = false;
+bool umavez = true;
 unsigned long long tempo_decorrido = 0;
 
+unsigned long lido;
+
 void loop() {
-	val_botao_1 = botao_1.get();
-	val_botao_2 = botao_2.get();
-	val_botao_3 = botao_3.get();
-
-	if (val_botao_1) { // ADM!
-		led_verde.set(true);
-		led_vermelho.set(true);
+	lido = RFID.read();
+	if (lido != '0' && umavez) {
+		umavez=false;
+		admin.set_admin(RFID.read());
 		buzz.play(1000);
-		timer.udelay((1000000) / 2);
-		buzz.play(500);
-		timer.udelay((1000000) / 10);
+		timer.udelay((1000000) / 5);
 		buzz.play(1000);
+		timer.udelay((1000000) / 5);
+		buzz.play(400);
+		timer.udelay((1000000) / 5);
+		buzz.play(400);
+		timer.udelay((1000000) / 5);
+		buzz.play(400);
+		timer.udelay((1000000) / 5);
 
-//		if(admin.admin_login(RFID.read()) == 0){
-		admin.admin_login(12345); //ISSO TA AQUI SO PRA TESTE!!!!!!!!!!!
-		tempo_decorrido = timer.millis(); //Para sair do estado de ADM depois de 10s sem uso
+	} else {
 
-		//Liga os dois LEDs para indicar que esta em estado de ADM
+		/*	val_botao_1 = botao_1.get();
+		 val_botao_2 = botao_2.get();
+		 val_botao_3 = botao_3.get();
 
-		val_botao_1 = false;
-		while (!val_botao_1 && ((10000+tempo_decorrido) > timer.millis())) {
-			if (val_botao_3) {
-				//Apaga toda a memoria
-				tempo_decorrido = timer.millis();
-			} else {
-				//Le se tem algo no RFID
-				int ret_add = admin.add(13579);
+		 if (!val_botao_1) { // ADM!
+		 led_verde.set(true);
+		 led_vermelho.set(true);
+		 buzz.play(1000);
+		 timer.udelay((1000000) / 2);
+		 buzz.play(500);
+		 timer.udelay((1000000) / 10);
+		 buzz.play(1000);
 
-			}
-			val_botao_1 = botao_1.get();
+		 //		if(admin.admin_login(RFID.read()) == 0){
+		 admin.admin_login(12345); //ISSO TA AQUI SO PRA TESTE!!!!!!!!!!!
+		 tempo_decorrido = timer.millis(); //Para sair do estado de ADM depois de 10s sem uso
+
+		 //Liga os dois LEDs para indicar que esta em estado de ADM
+
+		 while ((10000+tempo_decorrido) > timer.millis()) {
+		 if(val_botao_3){//Apaga a memoria
+		 admin.del(0);
+		 } else {
+		 //Le se tem algo no RFID
+		 int ret_add = admin.add(13579);
+
+		 }
+		 if(!botao_1.get())break;
+		 }
+		 //		}
+
+		 //Desloga
+		 admin.admin_logoff();
+		 tempo_decorrido = 0;
+		 led_verde.set(false);
+		 led_vermelho.set(false);
+		 }
+		 else */
+		if (val_botao_2) { //Abre a porta
+			rele.set(false);
+			led_verde.set(true);
+			buzz.play(1000);
+			rele.set(true);
 		}
-//		}
+/*
+		lido = RFID.read();
+		if (lido != '0') {
+			if (admin.search(lido) >= 0) {
+				sprintf(message, "%lu\n", lido);
+				uart.puts(message);
+				rele.set(false);
+				led_verde.set(true);
+				buzz.play(1000);
+				led_verde.set(false);
+				rele.set(true);
+			}
+		}*/
 
-		//Desloga
-		admin.admin_logoff();
-		tempo_decorrido = 0;
-		led_verde.set(false);
-		led_vermelho.set(false);
 	}
-	else if(val_botao_2){//Abre a porta
-		rele.set(true);
-		led_verde.set(true);
-		buzz.play(1000);
-		rele.set(false);
-		led_verde.set(false);
-	}
-
-	else if(val_botao_3){//Apaga a memoria
-		admin.del(0);
-	}
-
-//	RFID.read();
-
-
 
 }
 
 int main() {
 	setup();
+	rele.set(true);
 
 	while (true)
 		loop();

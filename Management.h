@@ -22,6 +22,10 @@ public:
 		_admin_logged = false;
 	}
 
+	void set_admin(T admin){
+		this->_manager_id = admin;
+	}
+
 	int admin_login(T user){
 		if(user == _manager_id){
 			_admin_logged=true;
