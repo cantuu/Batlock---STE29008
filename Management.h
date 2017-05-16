@@ -81,6 +81,9 @@ public:
 	int get_size_db(){
 		return _db_users.size();
 	}
+	T get_admin(){
+		return _manager_id;
+	}
 
 	int search(T user){
 		T popped;

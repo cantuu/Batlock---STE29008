@@ -34,7 +34,6 @@ unsigned long freq_buzzer = 240000;
 
 UART uart(19200, UART::DATABITS_8, UART::PARITY_NONE, UART::STOPBITS_2);
 
-//NAO SEI SE TA CERTO ISSO!
 UART1 serial(9600, UART1::DATABITS_8, UART1::PARITY_NONE, UART1::STOPBITS_1);
 RDM6300<UART1> RFID(&serial);
 
@@ -69,83 +68,132 @@ unsigned long long tempo_decorrido = 0;
 unsigned long lido;
 
 void loop() {
-	lido = RFID.read();
-	if (lido != '0' && umavez) {
-		umavez=false;
-		admin.set_admin(RFID.read());
-		buzz.play(1000);
-		timer.udelay((1000000) / 5);
-		buzz.play(1000);
-		timer.udelay((1000000) / 5);
-		buzz.play(400);
-		timer.udelay((1000000) / 5);
-		buzz.play(400);
-		timer.udelay((1000000) / 5);
-		buzz.play(400);
-		timer.udelay((1000000) / 5);
+	if(umavez){
+		lido = '0';
+		while (serial.has_data()) {
+			RFID.parse(serial.get());
+		}
+		if(RFID.get_valid_id()){
+			RFID.set_valid_id(false);
 
-	} else {
+			lido = RFID.get_current_id();
+			RFID.reset_current();
+			umavez=false;
+			admin.set_admin(lido);
+			buzz.play(1000);
+			timer.udelay((1000000) / 5);
+			buzz.play(1000);
+			timer.udelay((1000000) / 5);
+			buzz.play(400);
+			timer.udelay((1000000) / 5);
+			buzz.play(400);
+			timer.udelay((1000000) / 5);
+			buzz.play(400);
+			timer.udelay((1000000) / 5);
 
-		/*	val_botao_1 = botao_1.get();
-		 val_botao_2 = botao_2.get();
-		 val_botao_3 = botao_3.get();
+		}
 
-		 if (!val_botao_1) { // ADM!
-		 led_verde.set(true);
-		 led_vermelho.set(true);
-		 buzz.play(1000);
-		 timer.udelay((1000000) / 2);
-		 buzz.play(500);
-		 timer.udelay((1000000) / 10);
-		 buzz.play(1000);
+	} else{
+	 	 val_botao_1 = botao_1.get();
+	 	 val_botao_2 = botao_2.get();
+	 	 val_botao_3 = botao_3.get();
 
-		 //		if(admin.admin_login(RFID.read()) == 0){
-		 admin.admin_login(12345); //ISSO TA AQUI SO PRA TESTE!!!!!!!!!!!
-		 tempo_decorrido = timer.millis(); //Para sair do estado de ADM depois de 10s sem uso
+		 if (val_botao_1) { // ADM!
+			 led_verde.set(true);
+			 led_vermelho.set(true);
+			 buzz.play(1000);
+			 timer.udelay((1000000) / 2);
+			 buzz.play(500);
+			 timer.udelay((1000000) / 10);
+			 buzz.play(1000);
+			 tempo_decorrido = timer.millis(); //Para sair do estado de ADM depois de 10s sem uso
 
-		 //Liga os dois LEDs para indicar que esta em estado de ADM
+			 while ((10000+tempo_decorrido) > timer.millis()) {//10s para logar como adm
+				 while (serial.has_data()) {
+								RFID.parse(serial.get());
+				}
+				if(RFID.get_valid_id()){
+					lido=RFID.get_current_id();
+					RFID.set_valid_id(false);
+					RFID.reset_current();
+					if(admin.admin_login(lido)==0){
+						 buzz.play(2000);//logou
+						 	 	 	 //renovar o tempo e dar 10s pro jogaADM excluir tudo ou add um novo joga
+						 	 	 	 tempo_decorrido = timer.millis(); //Para sair do estado de ADM depois de 10s sem uso
+									 while ((10000+tempo_decorrido) > timer.millis()) {//10s para logar como adm
+										 if(val_botao_3){//Apaga a memoria
+											 admin.del(0);
+											 buzz.play(5000);
+										 } else {
+											 while (serial.has_data()) {
+														RFID.parse(serial.get());
+											}
+											if(RFID.get_valid_id()){
+												 buzz.play(500);
+												 led_verde.set(false);
+												 timer.delay(250);
+												 buzz.play(500);
+												 led_verde.set(true);
+												 timer.delay(250);
 
-		 while ((10000+tempo_decorrido) > timer.millis()) {
-		 if(val_botao_3){//Apaga a memoria
-		 admin.del(0);
-		 } else {
-		 //Le se tem algo no RFID
-		 int ret_add = admin.add(13579);
 
+												 int ret_add = admin.add(RFID.get_current_id());
+												 RFID.reset_current();
+													RFID.set_valid_id(false);
+
+
+											}
+
+										 }
+									 }
+									 break;
+					}
+				}
+				 if(botao_1.get())break;
+			 }
+			 //		}
+
+			 //Desloga
+			 admin.admin_logoff();
+			 tempo_decorrido = 0;
+			 led_verde.set(false);
+			 led_vermelho.set(false);
 		 }
-		 if(!botao_1.get())break;
-		 }
-		 //		}
-
-		 //Desloga
-		 admin.admin_logoff();
-		 tempo_decorrido = 0;
-		 led_verde.set(false);
-		 led_vermelho.set(false);
-		 }
-		 else */
-		if (val_botao_2) { //Abre a porta
+		 else	if (val_botao_2==1) { //Abre a porta
 			rele.set(false);
 			led_verde.set(true);
 			buzz.play(1000);
 			rele.set(true);
+			led_verde.set(false);
 		}
-/*
-		lido = RFID.read();
-		if (lido != '0') {
-			if (admin.search(lido) >= 0) {
-				sprintf(message, "%lu\n", lido);
-				uart.puts(message);
+
+		 while (serial.has_data()) {
+			        RFID.parse(serial.get());
+		}
+		if(RFID.get_valid_id()){
+			RFID.set_valid_id(false);
+			lido = RFID.get_current_id();
+			RFID.reset_current();
+			RFID.set_valid_id(false);
+
+			if (admin.search(lido) >= 0 || lido==admin.get_admin()) {
 				rele.set(false);
 				led_verde.set(true);
 				buzz.play(1000);
 				led_verde.set(false);
 				rele.set(true);
+			}else{
+				led_vermelho.set(true);
+				buzz.play(1000);
+				timer.delay(500);
+				buzz.play(1000);
+				timer.delay(500);
+				buzz.play(1000);
+				led_vermelho.set(false);
 			}
-		}*/
+		}
 
 	}
-
 }
 
 int main() {

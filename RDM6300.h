@@ -27,40 +27,26 @@ public:
     }
 
     unsigned long long read() {
-       while (!_id_is_valid) {
+      // while (!_id_is_valid) {
             while (_serial->has_data()) {
                 parse(_serial->get());
             }
-        }
+    //    }
         _id_is_valid = false;
         return _current_id;
-/*
-    		   if(_id_is_valid) {
-    	            while (_serial->has_data()) {
-    	                parse(_serial->get());
-    	            }
-        	        return _current_id;
-    	        }
-    	        _id_is_valid = false;
-    	        return 0;*/
     }
 
-private:
-    int get_val(char c) {
-        static const char ascii_diff = 48;
-        c -= ascii_diff;
-        if (c > 9)
-            c -= 7;
-        return c;
+    bool get_valid_id(){
+    	return _id_is_valid;
     }
-
-    int get_checksum(unsigned long long data) {
-        union {
-            unsigned char uc[8];
-            unsigned long long ul;
-        } tmp;
-        tmp.ul = data;
-        return tmp.uc[0] ^ tmp.uc[1] ^ tmp.uc[2] ^ tmp.uc[3] ^ tmp.uc[4];
+    bool set_valid_id(bool value){
+    	_id_is_valid = value;
+    }
+    unsigned long long get_current_id(){
+    	return _current_id;
+    }
+    void reset_current(){
+    	_current_id=0;
     }
 
     bool parse(char d) {
@@ -106,6 +92,26 @@ private:
 
         return _id_is_valid;
     }
+
+
+private:
+    int get_val(char c) {
+        static const char ascii_diff = 48;
+        c -= ascii_diff;
+        if (c > 9)
+            c -= 7;
+        return c;
+    }
+
+    int get_checksum(unsigned long long data) {
+        union {
+            unsigned char uc[8];
+            unsigned long long ul;
+        } tmp;
+        tmp.ul = data;
+        return tmp.uc[0] ^ tmp.uc[1] ^ tmp.uc[2] ^ tmp.uc[3] ^ tmp.uc[4];
+    }
+
 
     SerialT * _serial;
     unsigned long long _current_id;
