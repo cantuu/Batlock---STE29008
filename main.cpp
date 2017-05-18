@@ -68,6 +68,7 @@ unsigned long long tempo_decorrido = 0;
 unsigned long lido;
 
 void loop() {
+
 	if(umavez){
 		lido = '0';
 		while (serial.has_data()) {
@@ -121,6 +122,7 @@ void loop() {
 						 	 	 	 //renovar o tempo e dar 10s pro jogaADM excluir tudo ou add um novo joga
 						 	 	 	 tempo_decorrido = timer.millis(); //Para sair do estado de ADM depois de 10s sem uso
 									 while ((10000+tempo_decorrido) > timer.millis()) {//10s para logar como adm
+										 val_botao_3 = botao_3.get();
 										 if(val_botao_3){//Apaga a memoria
 											 admin.del(0);
 											 buzz.play(5000);
@@ -184,11 +186,9 @@ void loop() {
 				rele.set(true);
 			}else{
 				led_vermelho.set(true);
-				buzz.play(1000);
+				buzz.play(2000);
 				timer.delay(500);
-				buzz.play(1000);
-				timer.delay(500);
-				buzz.play(1000);
+				buzz.play(500);
 				led_vermelho.set(false);
 			}
 		}

@@ -14,7 +14,7 @@ GPIO::GPIO(int pin, PortDirection_t dir) {
 	//configurar DDR
 	if (pin >= 0 && pin <= 7) {
 		//portd
-		pin += 16;
+		//pin += 16;
 		this->pin_mask = (1<< pin);
 
 		_ddr = & DDRD;
